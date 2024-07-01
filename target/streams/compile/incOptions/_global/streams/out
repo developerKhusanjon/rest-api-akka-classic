@@ -1,0 +1,5 @@
+[debug] Created transactional ClassFileManager with tempDir = D:\Projects\rest-api-akka-classic\target\scala-2.12\classes.bak
+[debug] About to delete class files:
+[debug] We backup class files:
+[debug] Created transactional ClassFileManager with tempDir = D:\Projects\rest-api-akka-classic\target\scala-2.12\classes.bak
+[debug] Removing the temporary directory used for backing up class files: D:\Projects\rest-api-akka-classic\target\scala-2.12\classes.bak
