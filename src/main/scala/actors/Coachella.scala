@@ -30,6 +30,26 @@ class Coachella(implicit timeout: Timeout) extends Actor {
       def notFound(): Unit = sender() ! TicketSeller.Tickets(event)
       def buy(child: ActorRef): Unit = child.forward(TicketSeller.Buy(tickets))
       context.child(event).fold(notFound())(buy)
-E
+
+    case GetEvent(event) =>
+      def notFound() = sender() ! None
+      def getEvent(child: ActorRef) = child forward TicketSeller.GetEvent
+      context.child(event).fold(notFound())(getEvent)
+
+    case GetEvents =>
+      def getEvents = {
+        context.children.map { child =>
+          self.ask(GetEvent(child.path.name)).mapTo(Option[Event])
+        }
+      }
+      def convertToEvents(f: Future[Iterable[Option[Event]]]): Future[Events] = {
+        f.map(_.flatten).map(l => Events(l.toVector))
+      }
+      pipe(convertToEvents(Future.sequence(getEvents))) to sender()
+
+    case CancelEvent(event) =>
+      def notFound(): Unit = sender() ! None
+      def cancelEvent(child: ActorRef): Unit = child forward TicketSeller.Cancel
+      context.child(event).fold(notFound())(cancelEvent)
   }
 }
